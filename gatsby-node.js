@@ -1,16 +1,16 @@
-const crypto = require('crypto');
-const fs = require('fs');
+const crypto = require("crypto");
+const fs = require("fs");
 
-const zlib = require('zlib');
+const zlib = require("zlib");
 
-const axios = require('axios');
-const parse = require('csv-parse');
-const moment = require('moment');
+const axios = require("axios");
+const parse = require("csv-parse");
+const moment = require("moment");
 
 exports.sourceNodes = async ({ actions }, configOptions) => {
   const { createNode } = actions;
 
-  const analyticsFileName = '/tmp/data.csv';
+  const analyticsFileName = "/tmp/data.csv";
   await saveCSVData(
     configOptions.code,
     configOptions.personalToken,
@@ -20,10 +20,10 @@ exports.sourceNodes = async ({ actions }, configOptions) => {
   const data = [];
 
   input
-    .on('data', function(chunk) {
+    .on("data", function(chunk) {
       data.push(chunk);
     })
-    .on('end', function() {
+    .on("end", function() {
       const buf = Buffer.concat(data);
       zlib.gunzip(buf, function(err, buffer) {
         parse(buffer.toString(), { columns: false, trim: true }, function(
@@ -44,26 +44,27 @@ async function saveCSVData(code, token, csvFile) {
   url = `https://${code}.goatcounter.com/api/v0/export`;
   const headers = {
     Authorization: `Bearer ${token}`,
-    'content-type': 'application/json',
+    "content-type": "application/json",
   };
 
   let id = 0;
   try {
     const res = await axios.post(url, {}, { headers });
     id = res.data.id;
+    await new Promise((resolve) => setTimeout(resolve, 500));
   } catch (err) {
-    console.log('GoatCounter API threw an error', err.status, err.data);
+    console.log("GoatCounter API threw an error", err.status, err.data);
     throw new Error(err);
   }
 
   try {
     res = await axios.get(`${url}/${id}/download`, {
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
       headers,
     });
     fs.writeFileSync(csvFile, res.data);
   } catch (err) {
-    console.log('GoatCounter API threw an error', err.status, err.data);
+    console.log("GoatCounter API threw an error", err.status, err.data);
     throw new Error(err);
   }
 }
@@ -71,18 +72,19 @@ async function saveCSVData(code, token, csvFile) {
 function updateAnalyticsDataFromCSV(daysAgo, rows) {
   const analyticsData = {};
   const startDate = daysAgo
-    ? moment().subtract(daysAgo, 'days')
-    : moment('2020-01-01T00:00:00');
+    ? moment().subtract(daysAgo, "days")
+    : moment("2020-01-01T00:00:00");
   const endDate = moment();
 
   for (const row of rows.slice(1)) {
     const pageName = row[0];
+    const normalizedPageName = pageName.split("?")[0].split("#")[0];
     const viewDateTime = moment(row[11]);
     if (viewDateTime.isBetween(startDate, endDate)) {
-      if (analyticsData[pageName] !== undefined) {
-        analyticsData[pageName] += 1;
+      if (analyticsData[normalizedPageName] !== undefined) {
+        analyticsData[normalizedPageName] += 1;
       } else {
-        analyticsData[pageName] = 1;
+        analyticsData[normalizedPageName] = 1;
       }
     }
   }
