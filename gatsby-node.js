@@ -26,10 +26,12 @@ exports.sourceNodes = async ({ actions }, configOptions) => {
     .on("end", function() {
       const buf = Buffer.concat(data);
       zlib.gunzip(buf, function(err, buffer) {
+        console.error(err);
         parse(buffer.toString(), { columns: false, trim: true }, function(
           err,
           rows
         ) {
+          console.error(err);
           const analyticsData = updateAnalyticsDataFromCSV(
             configOptions.daysAgo,
             rows
@@ -51,7 +53,14 @@ async function saveCSVData(code, token, csvFile) {
   try {
     const res = await axios.post(url, {}, { headers });
     id = res.data.id;
-    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    var finishedRes = null;
+    do {
+      finishedRes = await axios.get(`${url}/${id}`, {
+        headers,
+      });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } while (finishedRes.data["finished_at"] != null);
   } catch (err) {
     console.log("GoatCounter API threw an error", err.status, err.data);
     throw new Error(err);
