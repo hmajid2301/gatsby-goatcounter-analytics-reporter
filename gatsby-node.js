@@ -26,12 +26,18 @@ exports.sourceNodes = async ({ actions }, configOptions) => {
     .on("end", function() {
       const buf = Buffer.concat(data);
       zlib.gunzip(buf, function(err, buffer) {
-        console.error(err);
+        if (err) {
+          throw err;
+        }
+
         parse(buffer.toString(), { columns: false, trim: true }, function(
           err,
           rows
         ) {
-          console.error(err);
+          if (err) {
+            throw err;
+          }
+
           const analyticsData = updateAnalyticsDataFromCSV(
             configOptions.daysAgo,
             rows
