@@ -4,7 +4,7 @@ Queries page views data from goatcounter analytics. Heavily inspired by the `gat
 
 ## How to use
 
-### Install 
+### Install
 
 Install the package with `npm`.
 
@@ -20,7 +20,6 @@ yarn add gatsby-plugin-goatcounter-analytics-reporter
 
 To use the plugin add it to your `gatsby-config.js`, make sure you have set up the variables required.
 
-
 ```js
 // gatsby-config.js
 {
@@ -28,7 +27,7 @@ To use the plugin add it to your `gatsby-config.js`, make sure you have set up t
   options: {
     code: process.env.GOATCOUNTER_CODE,
     personalToken: process.env.GOATCOUNTER_PERSONAL_TOKEN,
-    daysAGo: `30`,
+    daysAgo: `30`,
   }
 },
 ```
@@ -86,7 +85,7 @@ query MyQuery {
   }
 }
 
-// returns 
+// returns
 {
   "data": {
     "pageViews": {
@@ -99,3 +98,4 @@ query MyQuery {
 ## Appendix
 
 - Heavily inspired by [gatsby-plugin-google-analytics-reporter](https://github.com/Kornil/gatsby-plugin-google-analytics-reporter)
+```
