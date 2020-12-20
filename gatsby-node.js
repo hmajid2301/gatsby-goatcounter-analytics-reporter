@@ -94,7 +94,7 @@ function updateAnalyticsDataFromCSV(daysAgo, rows) {
   for (const row of rows.slice(1)) {
     const pageName = row[0];
     const normalizedPageName = pageName.split("?")[0].split("#")[0];
-    const viewDateTime = moment(row[11]);
+    const viewDateTime = moment(row[13]);
     if (viewDateTime.isBetween(startDate, endDate)) {
       if (analyticsData[normalizedPageName] !== undefined) {
         analyticsData[normalizedPageName] += 1;
