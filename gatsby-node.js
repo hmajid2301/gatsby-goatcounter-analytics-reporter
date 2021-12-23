@@ -60,7 +60,7 @@ async function saveCSVData(code, token, csvFile) {
     const res = await axios.post(url, {}, { headers });
     id = res.data.id;
 
-    var finishedRes = null;
+    let finishedRes = null;
     do {
       finishedRes = await axios.get(`${url}/${id}`, {
         headers,
