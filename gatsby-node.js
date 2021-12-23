@@ -65,7 +65,7 @@ async function saveCSVData(code, token, csvFile) {
       finishedRes = await axios.get(`${url}/${id}`, {
         headers,
       });
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } while (finishedRes.data["finished_at"] == null);
   } catch (err) {
     console.log("GoatCounter API threw an error", err.status, err.data);
